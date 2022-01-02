@@ -48,7 +48,17 @@ public enum AttributeConst {
     REP_ID("id"),
     REP_DATE("report_date"),
     REP_TITLE("title"),
-    REP_CONTENT("content");
+    REP_CONTENT("content"),
+
+        //フォロー管理
+        FOLLOW("follow"),
+        FOLLOWS("follows"),
+        FOL_COUNT("follows_count"),
+        FOL_ID("id"),
+        FOL_CODE("code"),
+        FOL_DATE("follow_date"),
+        FOL_NAME("name"),
+        FOL_OPPONENT("opponent");
 
     private final String text;
     private final Integer i;
