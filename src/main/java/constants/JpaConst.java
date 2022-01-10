@@ -44,9 +44,9 @@ public interface JpaConst {
         String TABLE_FOL = "follows"; //テーブル名
         //フォローテーブルカラム
         String FOL_COL_ID = "id"; //id
-        String FOL_COL_CODE = "code"; //社員番号
         String FOL_COL_NAME = "name"; //氏名
         String FOL_COL_OPPONENT = "opponent"; //フォロー先
+        String FOL_COL_CODE = "opponent_code"; //相手社員番号
         String FOL_COL_CREATED_AT = "created_at"; //フォロー日時
         String FOL_COL_DELETE_FLAG = "delete_flag"; //削除フラグ
         int FOL_DEL_TRUE = 1; //削除フラグON(削除済み)

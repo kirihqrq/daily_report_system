@@ -56,7 +56,7 @@ public class Follow {
      * 社員番号
      */
     @Column(name = JpaConst.FOL_COL_CODE, nullable = false, unique = true)
-    private String code;
+    private String opponentCode;
 
     /**
      * 氏名

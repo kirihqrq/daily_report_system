@@ -23,11 +23,6 @@ public class FollowView {
     private Integer id;
 
     /**
-     * 社員番号
-     */
-    private String code;
-
-    /**
      * 氏名
      */
     private String name;
@@ -36,6 +31,11 @@ public class FollowView {
      * 相手
      */
     private String opponent;
+
+    /**
+     * 社員番号
+     */
+    private String opponentCode;
 
     /**
      *フォロー日時

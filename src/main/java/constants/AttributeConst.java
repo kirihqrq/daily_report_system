@@ -55,7 +55,7 @@ public enum AttributeConst {
         FOLLOWS("follows"),
         FOL_COUNT("follows_count"),
         FOL_ID("id"),
-        FOL_CODE("code"),
+        FOL_CODE("opponent_code"),
         FOL_DATE("follow_date"),
         FOL_NAME("name"),
         FOL_OPPONENT("opponent");

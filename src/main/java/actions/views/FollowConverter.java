@@ -22,9 +22,9 @@ public class FollowConverter {
 
         return new Follow(
                 fv.getId(),
-                fv.getCode(),
                 fv.getName(),
                 fv.getOpponent(),
+                fv.getOpponentCode(),
                 fv.getCreatedAt(),
                 fv.getDeleteFlag() == null
                         ? null
@@ -46,9 +46,9 @@ public class FollowConverter {
 
         return new FollowView(
                 f.getId(),
-                f.getCode(),
                 f.getName(),
                 f.getOpponent(),
+                f.getOpponentCode(),
                 f.getCreatedAt(),
                 f.getDeleteFlag() == null
                         ? null
@@ -79,9 +79,9 @@ public class FollowConverter {
      */
     public static void copyViewToModel(Follow f, FollowView fv) {
         f.setId(fv.getId());
-        f.setCode(fv.getCode());
         f.setName(fv.getName());
         f.setOpponent(fv.getOpponent());
+        f.setOpponentCode(fv.getOpponentCode());
         f.setCreatedAt(fv.getCreatedAt());
         f.setDeleteFlag(fv.getDeleteFlag());
 

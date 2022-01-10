@@ -5,10 +5,12 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import actions.views.EmployeeView;
 import actions.views.FollowView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import services.EmployeeService;
 import services.FollowService;
 
 /**
@@ -17,7 +19,8 @@ import services.FollowService;
  */
 public class FollowAction extends ActionBase {
 
-    private FollowService service;
+    private FollowService folService;
+    private EmployeeService empService;
 
     /**
      * メソッドを実行する
@@ -25,11 +28,13 @@ public class FollowAction extends ActionBase {
     @Override
     public void process() throws ServletException, IOException {
 
-        service = new FollowService();
+        folService = new FollowService();
+        empService = new EmployeeService();
 
         //メソッドを実行
         invoke();
-        service.close();
+        folService.close();
+        empService.close();
     }
 
     /**
@@ -41,10 +46,10 @@ public class FollowAction extends ActionBase {
 
         //指定されたページ数の一覧画面に表示するフォローデータを取得
         int page = getPage();
-        List<FollowView> follows = service.getAllPerPage(page);
+        List<FollowView> follows = folService.getAllPerPage(page);
 
         //全フォローデータの件数を取得
-        long followsCount = service.countAll();
+        long followsCount = folService.countAll();
 
         putRequestScope(AttributeConst.FOLLOWS, follows); //取得したデータ
         putRequestScope(AttributeConst.FOL_COUNT, followsCount); //全てのデータの件数
@@ -115,7 +120,7 @@ public class FollowAction extends ActionBase {
                     null);
 
             //フォロー情報登録
-            List<String> errors = service.create(rv);
+            List<String> errors = folService.create(rv);
 
             if (errors.size() > 0) {
                 //登録中にエラーがあった場合
@@ -148,7 +153,7 @@ public class FollowAction extends ActionBase {
     public void show() throws ServletException, IOException {
 
         //idを条件にフォローデータを取得する
-        ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+        ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
         if (rv == null) {
             //該当のフォローデータが存在しない場合はエラー画面を表示
@@ -172,7 +177,7 @@ public class FollowAction extends ActionBase {
     public void edit() throws ServletException, IOException {
 
         //idを条件にフォローデータを取得する
-        ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+        ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
         //セッションからログイン中の従業員情報を取得
         EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
@@ -205,7 +210,7 @@ public class FollowAction extends ActionBase {
         if (checkToken()) {
 
             //idを条件にフォローデータを取得する
-            ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+            ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
             //入力されたフォロー内容を設定する
             rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
@@ -213,7 +218,7 @@ public class FollowAction extends ActionBase {
             rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
 
             //フォローデータを更新する
-            List<String> errors = service.update(rv);
+            List<String> errors = folService.update(rv);
 
             if (errors.size() > 0) {
                 //更新中にエラーが発生した場合
@@ -242,24 +247,26 @@ public class FollowAction extends ActionBase {
      * ユーザページを表示する
      * @throws ServletException
      * @throws IOException
+     * */
 
     public void showFollow() throws ServletException, IOException {
 
         //idを条件にフォローデータを取得する
-        //ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+        //FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
+        //idを条件に従業員データを取得する
+        EmployeeView ev = empService.findOne(toNumber(getRequestParam(AttributeConst.EMP_ID)));
+        if (ev == null || ev.getDeleteFlag() == AttributeConst.DEL_FLAG_TRUE.getIntegerValue()) {
 
-        //if (rv == null) {
-            //該当のフォローデータが存在しない場合はエラー画面を表示
-            //forward(ForwardConst.FW_ERR_UNKNOWN);
+            //データが取得できなかった、または論理削除されている場合はエラー画面を表示
+            forward(ForwardConst.FW_ERR_UNKNOWN);
+            return;
+        } else {
 
-        //} else {
-
-            //putRequestScope(AttributeConst.REPORT, rv); //取得したフォローデータ
-
+            putRequestScope(AttributeConst.EMPLOYEE, ev); //取得したデータ
             //ユーザーページを表示
-            forward(ForwardConst.FW_REP_SHOWFOLLOW);
-        //}
+            forward(ForwardConst.FW_FOL_SHOW);
+        }
+
     }
-    */
 
 }
