@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import actions.views.EmployeeConverter;
@@ -8,6 +9,7 @@ import actions.views.FollowConverter;
 import actions.views.FollowView;
 import constants.JpaConst;
 import models.Follow;
+import models.validators.FollowValidator;
 
 /**
  * フォローテーブルの操作に関わる処理を行うクラス
@@ -86,6 +88,35 @@ public class FollowService extends ServiceBase {
      */
     private Follow findOneInternal(int id) {
         return em.find(Follow.class, id);
+    }
+
+    /**
+     * 画面から入力された日報の登録内容を元にデータを1件作成し、フォローテーブルに登録する
+     * @param rv 登録内容
+     * @return バリデーションで発生したエラーのリスト
+     */
+    public List<String> create(FollowView fv) {
+        List<String> errors = FollowValidator.validate(fv);
+        if (errors.size() == 0) {
+            LocalDateTime ldt = LocalDateTime.now();
+            fv.setCreatedAt(ldt);
+            createInternal(fv);
+        }
+
+        //バリデーションで発生したエラーを返却（エラーがなければ0件の空リスト）
+        return errors;
+    }
+
+    /**
+     * フォローデータを1件登録する
+     * @param rv 日報データ
+     */
+    private void createInternal(FollowView fv) {
+
+        em.getTransaction().begin();
+        em.persist(FollowConverter.toModel(fv));
+        em.getTransaction().commit();
+
     }
 
 

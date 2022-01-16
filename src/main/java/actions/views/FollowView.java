@@ -23,29 +23,19 @@ public class FollowView {
     private Integer id;
 
     /**
-     * 氏名
+     * フォローした従業員
      */
-    private String name;
+    private EmployeeView employee;
 
     /**
      * 相手
      */
-    private String opponent;
-
-    /**
-     * 社員番号
-     */
-    private String opponentCode;
+    private EmployeeView opponent;
 
     /**
      *フォロー日時
      */
     private LocalDateTime createdAt;
-
-    /**
-     * 削除された従業員かどうか（現役：0、削除済み：1）
-     */
-    private Integer deleteFlag;
 
 }
 

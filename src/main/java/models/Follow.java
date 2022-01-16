@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -53,22 +55,18 @@ public class Follow {
     private Integer id;
 
     /**
-     * 社員番号
+     * フォローした従業員
      */
-    @Column(name = JpaConst.FOL_COL_CODE, nullable = false, unique = true)
-    private String opponentCode;
-
-    /**
-     * 氏名
-     */
-    @Column(name = JpaConst.FOL_COL_NAME, nullable = false)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = JpaConst.FOL_COL_EMP, nullable = false)
+    private Employee employee;
 
     /**
      * 相手
      */
-    @Column(name = JpaConst.FOL_COL_OPPONENT, nullable = false)
-    private String opponent;
+    @ManyToOne
+    @JoinColumn(name = JpaConst.FOL_COL_OPP, nullable = false)
+    private Employee opponent;
 
     /**
      *フォロー日時
@@ -76,10 +74,5 @@ public class Follow {
     @Column(name = JpaConst.FOL_COL_CREATED_AT, nullable = false)
     private LocalDateTime createdAt;
 
-    /**
-     * 削除された従業員かどうか（現役：0、削除済み：1）
-     */
-    @Column(name = JpaConst.FOL_COL_DELETE_FLAG, nullable = false)
-    private Integer deleteFlag;
 
 }

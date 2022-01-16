@@ -8,6 +8,7 @@
 <c:set var="actRep" value="${ForwardConst.ACT_REP.getValue()}" />
 <c:set var="commIdx" value="${ForwardConst.CMD_INDEX.getValue()}" />
 <c:set var="commEdit" value="${ForwardConst.CMD_EDIT.getValue()}" />
+<c:set var="commCrt" value="${ForwardConst.CMD_CREATE.getValue()}" />
 
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
@@ -24,13 +25,17 @@
                     <th>氏名</th>
                     <td><c:out value="${employee.name}" /></td>
                 </tr>
-                <!--<tr>
+                <tr>
                     <th>フォロー日時</th>
                     <fmt:parseDate value="${follow.createdAt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="createDay" type="date" />
                     <td><fmt:formatDate value="${createDay}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-                </tr>-->
+                </tr>
             </tbody>
         </table>
+
+        <form method="POST" action="<c:url value='?action=${actFol}&command=${commCrt}' />">
+            <c:import url="_form.jsp" />
+        </form>
 
         <p>
             <a href="<c:url value='?action=${actFol}&command=${commIdx}' />">フォロー 一覧</a>
@@ -38,6 +43,5 @@
          <p>
             <a href="<c:url value='?action=${actRep}&command=${commIdx}' />">日報 一覧</a>
         </p>
-        <button type="submit">フォローする</button>
     </c:param>
 </c:import>

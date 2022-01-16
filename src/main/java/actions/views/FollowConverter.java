@@ -3,8 +3,6 @@ package actions.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import constants.AttributeConst;
-import constants.JpaConst;
 import models.Follow;
 
 /**
@@ -22,15 +20,9 @@ public class FollowConverter {
 
         return new Follow(
                 fv.getId(),
-                fv.getName(),
-                fv.getOpponent(),
-                fv.getOpponentCode(),
-                fv.getCreatedAt(),
-                fv.getDeleteFlag() == null
-                        ? null
-                        : fv.getDeleteFlag() == AttributeConst.DEL_FLAG_TRUE.getIntegerValue()
-                                ? JpaConst.FOL_DEL_TRUE
-                                : JpaConst.FOL_DEL_FALSE);
+                EmployeeConverter.toModel(fv.getEmployee()),
+                EmployeeConverter.toModel(fv.getOpponent()),
+                fv.getCreatedAt());
     }
 
     /**
@@ -46,15 +38,9 @@ public class FollowConverter {
 
         return new FollowView(
                 f.getId(),
-                f.getName(),
-                f.getOpponent(),
-                f.getOpponentCode(),
-                f.getCreatedAt(),
-                f.getDeleteFlag() == null
-                        ? null
-                        : f.getDeleteFlag() == JpaConst.FOL_DEL_TRUE
-                                ? AttributeConst.DEL_FLAG_TRUE.getIntegerValue()
-                                : AttributeConst.DEL_FLAG_FALSE.getIntegerValue());
+                EmployeeConverter.toView(f.getEmployee()),
+                EmployeeConverter.toView(f.getOpponent()),
+                f.getCreatedAt());
     }
 
     /**
@@ -79,11 +65,9 @@ public class FollowConverter {
      */
     public static void copyViewToModel(Follow f, FollowView fv) {
         f.setId(fv.getId());
-        f.setName(fv.getName());
-        f.setOpponent(fv.getOpponent());
-        f.setOpponentCode(fv.getOpponentCode());
+        f.setEmployee(EmployeeConverter.toModel(fv.getEmployee()));
+        f.setEmployee(EmployeeConverter.toModel(fv.getOpponent()));
         f.setCreatedAt(fv.getCreatedAt());
-        f.setDeleteFlag(fv.getDeleteFlag());
 
     }
 

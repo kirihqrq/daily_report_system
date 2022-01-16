@@ -1,6 +1,7 @@
 package actions;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import actions.views.FollowView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import constants.MessageConst;
 import services.EmployeeService;
 import services.FollowService;
 
@@ -85,12 +87,12 @@ public class FollowAction extends ActionBase {
         forward(ForwardConst.FW_REP_NEW);
 
     }
-    */
 
     /**
      * 新規登録を行う
      * @throws ServletException
      * @throws IOException
+     */
 
     public void create() throws ServletException, IOException {
 
@@ -98,52 +100,51 @@ public class FollowAction extends ActionBase {
         if (checkToken()) {
 
             //フォローの日付が入力されていなければ、今日の日付を設定
-            LocalDate day = null;
-            if (getRequestParam(AttributeConst.REP_DATE) == null
-                    || getRequestParam(AttributeConst.REP_DATE).equals("")) {
-                day = LocalDate.now();
+            LocalDateTime day = null;
+            if (getRequestParam(AttributeConst.FOL_DATE) == null
+                    || getRequestParam(AttributeConst.FOL_DATE).equals("")) {
+                day = LocalDateTime.now();
             } else {
-                day = LocalDate.parse(getRequestParam(AttributeConst.REP_DATE));
+                day = LocalDateTime.parse(getRequestParam(AttributeConst.REP_DATE));
             }
 
             //セッションからログイン中の従業員情報を取得
             EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
 
+            EmployeeView ev2 = empService.findOne(toNumber(getRequestParam(AttributeConst.EMPLOYEE)));
+
+
             //パラメータの値をもとにフォロー情報のインスタンスを作成する
-            ReportView rv = new ReportView(
+            FollowView fv = new FollowView(
                     null,
                     ev, //ログインしている従業員を、フォロー作成者として登録する
-                    day,
-                    getRequestParam(AttributeConst.REP_TITLE),
-                    getRequestParam(AttributeConst.REP_CONTENT),
-                    null,
-                    null);
+                    ev2,//修正要＊＊＊
+                    day);
 
             //フォロー情報登録
-            List<String> errors = folService.create(rv);
+            List<String> errors = folService.create(fv);
 
             if (errors.size() > 0) {
                 //登録中にエラーがあった場合
 
                 putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
-                putRequestScope(AttributeConst.REPORT, rv);//入力されたフォロー情報
+                putRequestScope(AttributeConst.FOLLOW, fv);//入力されたフォロー情報
                 putRequestScope(AttributeConst.ERR, errors);//エラーのリスト
 
-                //新規登録画面を再表示
-                forward(ForwardConst.FW_REP_NEW);
+                //一覧画面表示
+                forward(ForwardConst.FW_FOL_SHOW);
 
             } else {
                 //登録中にエラーがなかった場合
 
                 //セッションに登録完了のフラッシュメッセージを設定
                 putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-
-                //一覧画面にリダイレクト
+              //一覧画面にリダイレクト
                 redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+
             }
         }
     }
-    */
 
     /**
      * 詳細画面を表示する
@@ -251,8 +252,10 @@ public class FollowAction extends ActionBase {
 
     public void showFollow() throws ServletException, IOException {
 
+        putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
+
         //idを条件にフォローデータを取得する
-        //FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
+        FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
         //idを条件に従業員データを取得する
         EmployeeView ev = empService.findOne(toNumber(getRequestParam(AttributeConst.EMP_ID)));
         if (ev == null || ev.getDeleteFlag() == AttributeConst.DEL_FLAG_TRUE.getIntegerValue()) {
@@ -263,6 +266,8 @@ public class FollowAction extends ActionBase {
         } else {
 
             putRequestScope(AttributeConst.EMPLOYEE, ev); //取得したデータ
+            putRequestScope(AttributeConst.FOLLOW, fv);
+
             //ユーザーページを表示
             forward(ForwardConst.FW_FOL_SHOW);
         }
