@@ -3,6 +3,8 @@ package services;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import actions.views.EmployeeConverter;
 import actions.views.EmployeeView;
 import actions.views.FollowConverter;
@@ -39,7 +41,7 @@ public class FollowService extends ServiceBase {
      */
     public long countAllMine(EmployeeView employee) {
 
-        long count = (long) em.createNamedQuery(JpaConst.Q_FOL_COUNT_ALL_MINE, Long.class)
+        long count = (long) em.createNamedQuery(JpaConst.Q_FOL_GET_BY_EMP_AND_OPP, Long.class)
                 .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, EmployeeConverter.toModel(employee))
                 .getSingleResult();
 
@@ -118,6 +120,37 @@ public class FollowService extends ServiceBase {
         em.getTransaction().commit();
 
     }
+
+    /**
+     * をEmployeeViewのインスタンスで返却する
+     * @param
+     * @param
+     * @param
+     * @return 取得データのインスタンス 取得できない場合null
+     */
+    public FollowView getByEmpAndOpp(EmployeeView employee, EmployeeView opponent) {
+        Follow f = null;
+        try {
+            //を条件に1件取得する
+            f = em.createNamedQuery(JpaConst.Q_FOL_GET_BY_EMP_AND_OPP, Follow.class)
+                    .setParameter(JpaConst.JPQL_PARM_EMP, EmployeeConverter.toModel(employee))
+                    .setParameter(JpaConst.JPQL_PARM_OPP, EmployeeConverter.toModel(opponent))
+                    .getSingleResult();
+        } catch (NoResultException ex) {
+        }
+
+        return FollowConverter.toView(f);
+
+    }
+
+    //public long getByEmpAndOpp(EmploeeView emploee) {
+
+        //long count = (long) em.createNamedQuery(JpaConst.Q_FOL_GET_BY_EMP_AND_OPP, .class)
+               // .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, FollowConverter.toModel(emploee))
+                //.getSingleResult();
+
+       // return count;
+   // }
 
 
 }

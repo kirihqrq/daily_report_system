@@ -15,4 +15,4 @@
 <br /><br />
 <input type="hidden" name="${AttributeConst.EMPLOYEE.getValue()}" value="${employee.id}" />
 <input type="hidden" name="${AttributeConst.TOKEN.getValue()}" value="${_token}" />
-<button type="submit">フォロー</button>
+<button type="submit"><c:out value="${followOn}" /></button>

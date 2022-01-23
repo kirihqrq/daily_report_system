@@ -43,6 +43,7 @@ public enum ForwardConst {
     FW_REP_NEW("reports/new"),
     FW_REP_EDIT("reports/edit"),
         FW_FOL_SHOW("users/show"),//*
+        FW_FOL_SHOW2("users/show2"),
         FW_FOL_INDEX("users/index");
 
     /**

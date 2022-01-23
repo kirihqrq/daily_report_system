@@ -252,10 +252,20 @@ public class FollowAction extends ActionBase {
 
     public void showFollow() throws ServletException, IOException {
 
+
         putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
 
-        //idを条件にフォローデータを取得する
-        FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
+        EmployeeView employee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+        EmployeeView opponent = empService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+        //を条件にフォローデータを取得する
+        FollowView fv = folService.getByEmpAndOpp(employee, opponent);
+        //FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
+        if(fv == null) {
+            request.setAttribute("followOn", "フォロー");
+        } else {
+            request.setAttribute("followOn", "フォロー中");
+        }
         //idを条件に従業員データを取得する
         EmployeeView ev = empService.findOne(toNumber(getRequestParam(AttributeConst.EMP_ID)));
         if (ev == null || ev.getDeleteFlag() == AttributeConst.DEL_FLAG_TRUE.getIntegerValue()) {
@@ -268,8 +278,15 @@ public class FollowAction extends ActionBase {
             putRequestScope(AttributeConst.EMPLOYEE, ev); //取得したデータ
             putRequestScope(AttributeConst.FOLLOW, fv);
 
+            String str1 = employee.getCode();
+            String str2 = opponent.getCode();
+
             //ユーザーページを表示
+            if(str1.equals(str2)) {
+                forward(ForwardConst.FW_FOL_SHOW2);
+            }else {
             forward(ForwardConst.FW_FOL_SHOW);
+            }
         }
 
     }
