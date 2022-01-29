@@ -20,29 +20,30 @@
         <table id="follow_list">
             <tbody>
                 <tr>
-                    <th class="follow_name">氏名</th>
+                    <th class="follow_name">フォロー中</th>
                     <th class="follow_date">フォロー日時</th>
                 </tr>
                 <c:forEach var="follow" items="${follows}" varStatus="status">
-                    <fmt:parseDate value="${follow.followDate}" pattern="yyyy-MM-dd" var="followDay" type="date" />
+                    <fmt:parseDate value="${follow.createdAt}" pattern="yyyy-MM-dd" var="createDay" type="date" />
 
                     <tr class="row${status.count % 2}">
-                        <td class="follow_name"><a href="<c:url value='?action=${actFol}&command=${commFollow}&id=${follow.id}' />"><c:out value="${follow.employee.name}" /></a></td>
-                        <td class="follow_date"><fmt:formatDate value='${followDay}' pattern='yyyy-MM-dd' /></td>
+                        <td class="follow_name"><a href="<c:url value='?action=${actFol}&command=${commFollow}&id=${follow.opponent.id}' />">
+                                <c:out value="${follow.opponent.name}" /></a></td>
+                        <td class="follow_date"><fmt:formatDate value='${createDay}' pattern='yyyy-MM-dd' /></td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
 
         <div id="pagination">
-            （全 ${reports_count} 件）<br />
-            <c:forEach var="i" begin="1" end="${((reports_count - 1) / maxRow) + 1}" step="1">
+            （全 ${follows_count} 件）<br />
+            <c:forEach var="i" begin="1" end="${((follows_count - 1) / maxRow) + 1}" step="1">
                 <c:choose>
                     <c:when test="${i == page}">
                         <c:out value="${i}" />&nbsp;
                     </c:when>
                     <c:otherwise>
-                        <a href="<c:url value='?action=${actRep}&command=${commIdx}&page=${i}' />"><c:out value="${i}" /></a>&nbsp;
+                        <a href="<c:url value='?action=${actFol}&command=${commIdx}&page=${i}' />"><c:out value="${i}" /></a>&nbsp;
                     </c:otherwise>
                 </c:choose>
             </c:forEach>

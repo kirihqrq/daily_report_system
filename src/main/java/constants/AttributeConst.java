@@ -51,13 +51,13 @@ public enum AttributeConst {
     REP_CONTENT("content"),
 
         //フォロー管理
-        FOLLOW("follow"),
-        FOLLOWS("follows"),
-        FOL_COUNT("follows_count"),
-        FOL_ID("id"),
-        FOL_EMP("emploee_id"),
-        FOL_OPP("opponent_id"),
-        FOL_DATE("created_at");
+    FOLLOW("follow"),
+    FOLLOWS("follows"),
+    FOL_COUNT("follows_count"),
+    FOL_ID("id"),
+    FOL_EMP("emploee_id"),
+    FOL_OPP("opponent_id"),
+    FOL_DATE("created_at");
 
     private final String text;
     private final Integer i;

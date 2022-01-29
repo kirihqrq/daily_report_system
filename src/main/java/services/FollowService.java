@@ -94,7 +94,7 @@ public class FollowService extends ServiceBase {
 
     /**
      * 画面から入力された日報の登録内容を元にデータを1件作成し、フォローテーブルに登録する
-     * @param rv 登録内容
+     * @param fv 登録内容
      * @return バリデーションで発生したエラーのリスト
      */
     public List<String> create(FollowView fv) {
@@ -111,7 +111,7 @@ public class FollowService extends ServiceBase {
 
     /**
      * フォローデータを1件登録する
-     * @param rv 日報データ
+     * @param fv フォローデータ
      */
     private void createInternal(FollowView fv) {
 
@@ -122,10 +122,8 @@ public class FollowService extends ServiceBase {
     }
 
     /**
-     * をEmployeeViewのインスタンスで返却する
-     * @param
-     * @param
-     * @param
+     * フォロー情報をEmployeeViewのインスタンスで返却する
+     * @param f
      * @return 取得データのインスタンス 取得できない場合null
      */
     public FollowView getByEmpAndOpp(EmployeeView employee, EmployeeView opponent) {
@@ -143,14 +141,15 @@ public class FollowService extends ServiceBase {
 
     }
 
-    //public long getByEmpAndOpp(EmploeeView emploee) {
-
-        //long count = (long) em.createNamedQuery(JpaConst.Q_FOL_GET_BY_EMP_AND_OPP, .class)
-               // .setParameter(JpaConst.JPQL_PARM_EMPLOYEE, FollowConverter.toModel(emploee))
-                //.getSingleResult();
-
-       // return count;
-   // }
-
+    /**
+     * フォロー情報を削除する
+     * @param fv
+     */
+    public void destroy(FollowView fv1) {
+        em.getTransaction().begin();
+        em.remove(findOneInternal(fv1.getId()));
+        em.getTransaction().commit();
+        em.close();
+    }
 
 }

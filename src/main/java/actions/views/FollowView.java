@@ -37,5 +37,9 @@ public class FollowView {
      */
     private LocalDateTime createdAt;
 
+    public int size() {
+        return 0;
+    }
+
 }
 

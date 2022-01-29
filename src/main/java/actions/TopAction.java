@@ -40,8 +40,6 @@ public class TopAction extends ActionBase {
      */
     public void index() throws ServletException, IOException {
 
-        // 以下追記
-
         //セッションからログイン中の従業員情報を取得
         EmployeeView loginEmployee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
 
@@ -56,8 +54,6 @@ public class TopAction extends ActionBase {
         putRequestScope(AttributeConst.REP_COUNT, myReportsCount); //ログイン中の従業員が作成した日報の数
         putRequestScope(AttributeConst.PAGE, page); //ページ数
         putRequestScope(AttributeConst.MAX_ROW, JpaConst.ROW_PER_PAGE); //1ページに表示するレコードの数
-
-        //↑ここまで追記
 
         //セッションにフラッシュメッセージが設定されている場合はリクエストスコープに移し替え、セッションからは削除する
         String flush = getSessionScope(AttributeConst.FLUSH);

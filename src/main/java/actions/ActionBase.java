@@ -74,7 +74,6 @@ public abstract class ActionBase {
             //commandの値が不正で実行できない場合エラー画面を呼び出し
             forward(ForwardConst.FW_ERR_UNKNOWN);
         }
-
     }
 
     /**

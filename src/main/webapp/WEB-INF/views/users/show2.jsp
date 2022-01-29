@@ -13,7 +13,7 @@
 <c:import url="/WEB-INF/views/layout/app.jsp">
     <c:param name="content">
 
-        <h2>マイページページ</h2>
+        <h2>マイページ</h2>
 
         <table>
             <tbody>

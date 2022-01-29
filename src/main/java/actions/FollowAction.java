@@ -46,9 +46,12 @@ public class FollowAction extends ActionBase {
      */
     public void index() throws ServletException, IOException {
 
-        //指定されたページ数の一覧画面に表示するフォローデータを取得
+        //セッションからログイン中の従業員情報を取得
+        EmployeeView loginEmployee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+
+        //ログイン中の従業員のフォローデータを、指定されたページ数の一覧画面に表示する分取得する
         int page = getPage();
-        List<FollowView> follows = folService.getAllPerPage(page);
+        List<FollowView> follows = folService.getMinePerPage(loginEmployee, page);
 
         //全フォローデータの件数を取得
         long followsCount = folService.countAll();
@@ -70,26 +73,7 @@ public class FollowAction extends ActionBase {
     }
 
     /**
-     * 新規登録画面を表示する
-     * @throws ServletException
-     * @throws IOException
-
-    public void entryNew() throws ServletException, IOException {
-
-        putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
-
-        //フォロー情報の空インスタンスに、フォローの日付＝今日の日付を設定する
-        ReportView rv = new ReportView();
-        rv.setReportDate(LocalDate.now());
-        putRequestScope(AttributeConst.REPORT, rv); //日付のみ設定済みのフォローインスタンス
-
-        //新規登録画面を表示
-        forward(ForwardConst.FW_REP_NEW);
-
-    }
-
-    /**
-     * 新規登録を行う
+     * フォローを行う
      * @throws ServletException
      * @throws IOException
      */
@@ -109,140 +93,49 @@ public class FollowAction extends ActionBase {
             }
 
             //セッションからログイン中の従業員情報を取得
-            EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
+            EmployeeView employee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
 
-            EmployeeView ev2 = empService.findOne(toNumber(getRequestParam(AttributeConst.EMPLOYEE)));
+            EmployeeView opponent = empService.findOne(toNumber(getRequestParam(AttributeConst.EMPLOYEE)));
 
+            FollowView fv1 = folService.getByEmpAndOpp(employee, opponent);
 
             //パラメータの値をもとにフォロー情報のインスタンスを作成する
             FollowView fv = new FollowView(
                     null,
-                    ev, //ログインしている従業員を、フォロー作成者として登録する
-                    ev2,//修正要＊＊＊
+                    employee, //ログインしている従業員
+                    opponent,//フォローする従業員
                     day);
 
-            //フォロー情報登録
-            List<String> errors = folService.create(fv);
+            if(fv1 == null) {
 
-            if (errors.size() > 0) {
-                //登録中にエラーがあった場合
+                //フォロー情報登録
+                List<String> errors = folService.create(fv);
 
-                putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
-                putRequestScope(AttributeConst.FOLLOW, fv);//入力されたフォロー情報
-                putRequestScope(AttributeConst.ERR, errors);//エラーのリスト
+                if (errors.size() > 0) {
+                    //登録中にエラーがあった場合
+                    putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
+                    putRequestScope(AttributeConst.FOLLOW, fv);//入力されたフォロー情報
+                    putRequestScope(AttributeConst.ERR, errors);//エラーのリスト
 
-                //一覧画面表示
-                forward(ForwardConst.FW_FOL_SHOW);
+                    //一覧画面表示
+                    forward(ForwardConst.FW_FOL_INDEX);
+                } else {
+                    //登録中にエラーがなかった場合
+                    //セッションに登録完了のフラッシュメッセージを設定
+                    putSessionScope(AttributeConst.FLUSH, MessageConst.I_FOLLOWED.getMessage());
+                    //一覧画面にリダイレクト
+                    redirect(ForwardConst.ACT_FOL, ForwardConst.CMD_INDEX);
 
-            } else {
-                //登録中にエラーがなかった場合
-
-                //セッションに登録完了のフラッシュメッセージを設定
-                putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
-              //一覧画面にリダイレクト
-                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
-
-            }
-        }
-    }
-
-    /**
-     * 詳細画面を表示する
-     * @throws ServletException
-     * @throws IOException
-
-    public void show() throws ServletException, IOException {
-
-        //idを条件にフォローデータを取得する
-        ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
-
-        if (rv == null) {
-            //該当のフォローデータが存在しない場合はエラー画面を表示
-            forward(ForwardConst.FW_ERR_UNKNOWN);
-
-        } else {
-
-            putRequestScope(AttributeConst.REPORT, rv); //取得したフォローデータ
-
-            //詳細画面を表示
-            forward(ForwardConst.FW_REP_SHOW);
-        }
-    }
-    */
-
-    /**
-     * 編集画面を表示する
-     * @throws ServletException
-     * @throws IOException
-
-    public void edit() throws ServletException, IOException {
-
-        //idを条件にフォローデータを取得する
-        ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
-
-        //セッションからログイン中の従業員情報を取得
-        EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
-
-        if (rv == null || ev.getId() != rv.getEmployee().getId()) {
-            //該当のフォローデータが存在しない、または
-            //ログインしている従業員がフォローの作成者でない場合はエラー画面を表示
-            forward(ForwardConst.FW_ERR_UNKNOWN);
-
-        } else {
-
-            putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
-            putRequestScope(AttributeConst.REPORT, rv); //取得したフォローデータ
-
-            //編集画面を表示
-            forward(ForwardConst.FW_REP_EDIT);
-        }
-
-    }
-    */
-
-    /**
-     * 更新を行う
-     * @throws ServletException
-     * @throws IOException
-
-    public void update() throws ServletException, IOException {
-
-        //CSRF対策 tokenのチェック
-        if (checkToken()) {
-
-            //idを条件にフォローデータを取得する
-            ReportView rv = folService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
-
-            //入力されたフォロー内容を設定する
-            rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
-            rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
-            rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
-
-            //フォローデータを更新する
-            List<String> errors = folService.update(rv);
-
-            if (errors.size() > 0) {
-                //更新中にエラーが発生した場合
-
-                putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
-                putRequestScope(AttributeConst.REPORT, rv); //入力されたフォロー情報
-                putRequestScope(AttributeConst.ERR, errors); //エラーのリスト
-
-                //編集画面を再表示
-                forward(ForwardConst.FW_REP_EDIT);
-            } else {
-                //更新中にエラーがなかった場合
-
-                //セッションに更新完了のフラッシュメッセージを設定
-                putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
-
+                }
+            }else {
+                folService.destroy(fv1);
+                // セッションスコープ上の不要になったデータを削除
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_UNFOLLOWED.getMessage());
                 //一覧画面にリダイレクト
-                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
-
+                redirect(ForwardConst.ACT_FOL, ForwardConst.CMD_INDEX);
             }
         }
     }
-    */
 
     /**
      * ユーザページを表示する
@@ -258,9 +151,9 @@ public class FollowAction extends ActionBase {
         EmployeeView employee = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
         EmployeeView opponent = empService.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
 
-        //を条件にフォローデータを取得する
+        //フォローデータを取得する
         FollowView fv = folService.getByEmpAndOpp(employee, opponent);
-        //FollowView fv = folService.findOne(toNumber(getRequestParam(AttributeConst.FOL_ID)));
+
         if(fv == null) {
             request.setAttribute("followOn", "フォロー");
         } else {
@@ -275,7 +168,7 @@ public class FollowAction extends ActionBase {
             return;
         } else {
 
-            putRequestScope(AttributeConst.EMPLOYEE, ev); //取得したデータ
+            putRequestScope(AttributeConst.EMPLOYEE, ev);
             putRequestScope(AttributeConst.FOLLOW, fv);
 
             String str1 = employee.getCode();
@@ -288,7 +181,5 @@ public class FollowAction extends ActionBase {
             forward(ForwardConst.FW_FOL_SHOW);
             }
         }
-
     }
-
 }
