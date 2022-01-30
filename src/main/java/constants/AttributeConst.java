@@ -49,6 +49,11 @@ public enum AttributeConst {
     REP_DATE("report_date"),
     REP_TITLE("title"),
     REP_CONTENT("content"),
+    REP_GENRE_FLG("genre_flag"),
+
+    //日報ジャンルフラグ
+    GENRE_DO(1),
+    GENRE_PLAN(0),
 
         //フォロー管理
     FOLLOW("follow"),

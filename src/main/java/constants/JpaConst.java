@@ -36,9 +36,13 @@ public interface JpaConst {
     String REP_COL_EMP = "employee_id"; //日報を作成した従業員のid
     String REP_COL_REP_DATE = "report_date"; //いつの日報かを示す日付
     String REP_COL_TITLE = "title"; //日報のタイトル
+    String REP_COL_GENRE_FLAG = "genre_flag"; //日報のジャンル
     String REP_COL_CONTENT = "content"; //日報の内容
     String REP_COL_CREATED_AT = "created_at"; //登録日時
     String REP_COL_UPDATED_AT = "updated_at"; //更新日時
+
+    int GENRE_DO = 1; //ジャンルDo
+    int GENRE_PLAN = 0; //ジャンルPlan
 
     //フォローテーブル
     String TABLE_FOL = "follows"; //テーブル名

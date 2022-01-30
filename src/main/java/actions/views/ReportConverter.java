@@ -3,6 +3,8 @@ package actions.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import constants.AttributeConst;
+import constants.JpaConst;
 import models.Report;
 
 /**
@@ -22,6 +24,11 @@ public class ReportConverter {
                 EmployeeConverter.toModel(rv.getEmployee()),
                 rv.getReportDate(),
                 rv.getTitle(),
+                rv.getGenreFlag() == null
+                ? null
+                : rv.getGenreFlag() == AttributeConst.GENRE_DO.getIntegerValue()
+                        ? JpaConst.GENRE_DO
+                        : JpaConst.GENRE_PLAN,
                 rv.getContent(),
                 rv.getCreatedAt(),
                 rv.getUpdatedAt());
@@ -43,6 +50,11 @@ public class ReportConverter {
                 EmployeeConverter.toView(r.getEmployee()),
                 r.getReportDate(),
                 r.getTitle(),
+                r.getGenreFlag() == null
+                ? null
+                : r.getGenreFlag() == JpaConst.GENRE_DO
+                        ? AttributeConst.GENRE_DO.getIntegerValue()
+                        : AttributeConst.GENRE_PLAN.getIntegerValue(),
                 r.getContent(),
                 r.getCreatedAt(),
                 r.getUpdatedAt());
@@ -73,6 +85,7 @@ public class ReportConverter {
         r.setEmployee(EmployeeConverter.toModel(rv.getEmployee()));
         r.setReportDate(rv.getReportDate());
         r.setTitle(rv.getTitle());
+        r.setGenreFlag(rv.getGenreFlag());
         r.setContent(rv.getContent());
         r.setCreatedAt(rv.getCreatedAt());
         r.setUpdatedAt(rv.getUpdatedAt());

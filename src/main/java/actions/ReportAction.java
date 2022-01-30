@@ -112,6 +112,7 @@ public class ReportAction extends ActionBase {
                     ev, //ログインしている従業員を登録する
                     day,
                     getRequestParam(AttributeConst.REP_TITLE),
+                    toNumber(getRequestParam(AttributeConst.REP_GENRE_FLG)),
                     getRequestParam(AttributeConst.REP_CONTENT),
                     null,
                     null);
@@ -156,6 +157,13 @@ public class ReportAction extends ActionBase {
             forward(ForwardConst.FW_ERR_UNKNOWN);
 
         } else {
+            Integer genre = rv.getGenreFlag();
+
+            if(genre == 0) {
+                request.setAttribute("genreFlag", "計画");
+            } else {
+                request.setAttribute("genreFlag", "実行");
+            }
 
             putRequestScope(AttributeConst.REPORT, rv); //取得した日報データ
 
@@ -209,6 +217,7 @@ public class ReportAction extends ActionBase {
             //入力された日報内容を設定する
             rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
             rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
+            rv.setGenreFlag(toNumber(getRequestParam(AttributeConst.REP_GENRE_FLG)));
             rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
 
             //日報データを更新する

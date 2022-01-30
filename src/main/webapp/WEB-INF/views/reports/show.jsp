@@ -19,13 +19,16 @@
                     <td><c:out value="${report.employee.name}" /></td>
                 </tr>
                 <tr>
-                    <th>日付</th>
-                    <fmt:parseDate value="${report.reportDate}" pattern="yyyy-MM-dd" var="reportDay" type="date" />
-                    <td><fmt:formatDate value='${reportDay}' pattern='yyyy-MM-dd' /></td>
+                    <th>タイトル</th>
+                    <td><pre><c:out value="${report.title}" /></pre></td>
+                </tr>
+                <tr>
+                    <th>ジャンル</th>
+                    <td><c:out value="${genreFlag}" /></td>
                 </tr>
                 <tr>
                     <th>内容</th>
-                    <td><pre><c:out value="${report.content}" /></pre></td>
+                    <td><c:out value="${report.content}" /></td>
                 </tr>
                 <tr>
                     <th>登録日時</th>

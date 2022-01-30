@@ -39,6 +39,11 @@ public class ReportView {
     private String title;
 
     /**
+     * 日報のジャンル(Plan：0、Do：1)
+     */
+    private Integer genreFlag;
+
+    /**
      * 日報の内容
      */
     private String content;

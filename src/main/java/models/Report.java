@@ -76,6 +76,12 @@ public class Report {
     private String title;
 
     /**
+     * 日報のジャンル（Plan：0、Do：1）
+     */
+    @Column(name = JpaConst.REP_COL_GENRE_FLAG, nullable = false)
+    private Integer genreFlag;
+
+    /**
      * 日報の内容
      */
     @Lob
